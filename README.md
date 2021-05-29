@@ -46,6 +46,29 @@ This is preview of the app
 
 ![alt text](https://github.com/raqib007/meme-verse/blob/master/image/schema-diagram.png)
 
+## Screen
+
+![alt text](https://github.com/raqib007/meme-verse/blob/master/image/1.png)
+
+![alt text](https://github.com/raqib007/meme-verse/blob/master/image/2.png)
+
+![alt text](https://github.com/raqib007/meme-verse/blob/master/image/3.png)
+
+![alt text](https://github.com/raqib007/meme-verse/blob/master/image/4.png)
+
+![alt text](https://github.com/raqib007/meme-verse/blob/master/image/5.png)
+
+![alt text](https://github.com/raqib007/meme-verse/blob/master/image/6.png)
+
+![alt text](https://github.com/raqib007/meme-verse/blob/master/image/7.png)
+
+![alt text](https://github.com/raqib007/meme-verse/blob/master/image/8.png)
+
+![alt text](https://github.com/raqib007/meme-verse/blob/master/image/9.png)
+
+![alt text](https://github.com/raqib007/meme-verse/blob/master/image/10.png)
+
+
 ## Installation:
 Current directory: .../MemeVerseAssignment
   ```
