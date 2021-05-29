@@ -1,0 +1,20 @@
+
+.login-form-forgot {
+    float: left;
+}
+.login-form-signup {
+    float: right;
+    color : #000;
+}
+.m-r-b-0{
+    margin-bottom: 0!important;
+}
+.content{
+    margin-top: 65px;
+}
+.div-category{
+    background-color: #fafafa;
+}
+.site-layout-content {
+    padding: 0px 10px;
+}
