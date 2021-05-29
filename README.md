@@ -44,7 +44,7 @@ This is preview of the app
 
 ## Database Schema Diagram
 
-https://github.com/raqib007/meme-verse/blob/master/image/schema-diagram.png
+![alt text](https://github.com/raqib007/meme-verse/blob/master/image/schema-diagram.png)
 
 ## Installation:
 Current directory: .../MemeVerseAssignment
