@@ -3,8 +3,9 @@ import {Form, Input, Row, Col, Button, Alert} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 
 export default function Signup(props) {
+    const [form] = Form.useForm();
     const onFinish = (values) => {
-        props.onSignupClick(values);
+        props.onSignupClick(values,form);
     };
 
     const handleSigninClick = (e) => {
@@ -20,6 +21,7 @@ export default function Signup(props) {
                 className="login-form"
                 initialValues={{remember: true}}
                 onFinish={onFinish}
+                form={form}
             >
                 <Form.Item>
                     <Row gutter={8}>

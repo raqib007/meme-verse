@@ -1,5 +1,6 @@
-import React, {useState, useContext, useEffect} from 'react';
-import {Layout, Modal, Row, Col, Typography, message} from 'antd';
+import React, {useState, useContext, useEffect, useRef} from 'react';
+import * as PusherPushNotifications from "@pusher/push-notifications-web";
+import {Layout, Modal, Row, Col, Typography, message, notification} from 'antd';
 import {Route, Switch} from 'react-router-dom';
 import SigninForm from '../forms/SigninForm';
 import SignupForm from '../forms/SignupForm';
@@ -13,6 +14,7 @@ import MemeDetails from "./MemeDetails";
 import Sticky from 'react-stickynode';
 import './css/index.css';
 import UserDetails from "./UserDetails";
+import Pusher from 'pusher-js';
 
 const {Title} = Typography;
 const {Content} = Layout;
@@ -26,6 +28,7 @@ export default function Dashboard(props) {
     const [errorMsg, seterrorMsg] = useState('');
     const {get, put, isLoading} = useFetch(process.env.REACT_APP_BASE_URL);
     const base_url = process.env.REACT_APP_BASE_URL;
+    const clientRef = useRef();
 
     useEffect(() => {
         get('category')
@@ -35,7 +38,31 @@ export default function Dashboard(props) {
             .catch(error => {
                 console.log(error);
             });
-    }, []);
+
+        clientRef.current = new Pusher(process.env.REACT_APP_PUSHER_KEY, {
+            cluster: process.env.REACT_APP_PUSHER_CLUSTER,
+        });
+
+        if(auth.user !== null){
+            // const channel = clientRef.current.subscribe(`pusher-60ae66fa0876f9086c59ff5e`);
+            console.log('inside pusher bind ');
+            const channel = clientRef.current.subscribe(`pusher-${auth.user.userId}`);
+
+            channel.bind("post_upload", function (dataFromServer) {
+                notification.info({
+                    message: dataFromServer?.message,
+                    description: dataFromServer?.description,
+                    placement:'bottomRight',
+                    duration: 9
+                });
+
+            });
+        }else{
+            console.log('Not binding pusher');
+        }
+
+        return () => clientRef.current.disconnect();
+    }, [clientRef,auth]);
 
     function setModal2Visible(val, type, title) {
         setModalVisible(val);
@@ -44,66 +71,68 @@ export default function Dashboard(props) {
         seterrorMsg('');
     }
 
-    function handleSigninClick(values) {
-        fetch(`${base_url}signin`,{
-            method:"post",
-            headers:{
-                "Content-Type":"application/json"
+
+    function handleSigninClick(values,form) {
+        fetch(`${base_url}signin`, {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json"
             },
-            body:JSON.stringify(values)
-        }).then(res=>{
-            if(res.status == 200){
+            body: JSON.stringify(values)
+        }).then(res => {
+            if (res.status == 200) {
                 seterrorMsg('');
                 return res.json();
-            }else{
+            } else {
                 message.error('Username or password wrong!');
                 seterrorMsg('Username or password wrong!');
                 throw new Error("HTTP status " + res.status);
             }
-        }).then(data=>{
+        }).then(data => {
             localStorage.setItem('token', JSON.stringify(data.token));
             auth.setAuth().then(() => {
                 setModal2Visible(false, '');
+                form.resetFields();
             });
-        }).catch(err=>{
-            console.log('err',err);
+        }).catch(err => {
+            console.log('err', err);
         });
     }
 
     function handleSignupClick(values) {
         console.log(values);
-        fetch(`${base_url}users`,{
-            method:"post",
-            headers:{
-                "Content-Type":"application/json"
+        fetch(`${base_url}users`, {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json"
             },
-            body:JSON.stringify(values)
-        }).then(res=>{
+            body: JSON.stringify(values)
+        }).then(res => {
             //console.log(res);
-            if(res.status == 200){
+            if (res.status == 200) {
                 seterrorMsg('');
                 return res.json();
-            }else{
+            } else {
                 seterrorMsg(res.message);
                 throw new Error("HTTP status " + res.status);
             }
-        }).then(data=>{
+        }).then(data => {
             console.log(data);
-            if(data.success){
-                setModal2Visible(true, 'signin','Sign In');
-            }else{
+            if (data.success) {
+                setModal2Visible(true, 'signin', 'Sign In');
+            } else {
                 message.error(data.message);
                 seterrorMsg(data.message);
             }
-        }).catch(err=>{
-            console.log('err',err);
+        }).catch(err => {
+            console.log('err', err);
         })
     }
 
     function handleUpVoteClick(meme) {
         let url = `meme/like/${meme._id}`;
-        let alreadyExists = meme.likes.filter(item=>(item == auth.user.userId));
-        if(alreadyExists.length > 0){
+        let alreadyExists = meme.likes.filter(item => (item == auth.user.userId));
+        if (alreadyExists.length > 0) {
             url = `meme/removelike/${meme._id}`;
         }
         put(url, {})
@@ -117,8 +146,8 @@ export default function Dashboard(props) {
 
     function handleDownVoteClick(meme) {
         let url = `meme/unlike/${meme._id}`;
-        let alreadyExists = meme.likes.filter(item=>(item == auth.user.userId));
-        if(alreadyExists.length > 0){
+        let alreadyExists = meme.likes.filter(item => (item == auth.user.userId));
+        if (alreadyExists.length > 0) {
             url = `meme/removeunlike/${meme._id}`;
         }
         put(url, {})
@@ -138,13 +167,13 @@ export default function Dashboard(props) {
 
     const modalContent = () => {
         let content;
-        if(modalFormType === 'signin'){
+        if (modalFormType === 'signin') {
             content = <SigninForm onSigninClick={handleSigninClick} onAccountClick={setModal2Visible}
-                                  isLoading={isLoading} errorMsg={errorMsg}/>;
-        }else if(modalFormType === 'signup'){
+                                  isLoading={isLoading} errorMsg={errorMsg} />;
+        } else if (modalFormType === 'signup') {
             content = <SignupForm onSignupClick={handleSignupClick} onSigninClick={setModal2Visible}
                                   isLoading={isLoading} errorMsg={errorMsg}/>;
-        }else if(modalFormType === 'upload'){
+        } else if (modalFormType === 'upload') {
             content = <FileUpload modalStatus={setModal2Visible} user={auth.user.userId}/>;
         }
         return content;
@@ -163,38 +192,38 @@ export default function Dashboard(props) {
                             </Sticky>
                         </Col>
                         <Col span={12} className="site-layout-content">
-                                <Switch>
-                                    <Route path="/" exact>
-                                        <Meme onUpVoteClick={handleUpVoteClick}
-                                              onDownVoteClick={handleDownVoteClick}
-                                              onShowModal={setModal2Visible}
-                                        />
-                                    </Route>
-                                    <Route path="/meme/:id" exact>
-                                        <Meme onUpVoteClick={handleUpVoteClick}
-                                              onDownVoteClick={handleDownVoteClick}
-                                              onShowModal={setModal2Visible}
-                                        />
-                                    </Route>
-                                    <Route path="/details/:id" exact>
-                                        <MemeDetails onUpVoteClick={handleUpVoteClick}
-                                                     onDownVoteClick={handleDownVoteClick}
-                                                     onShowModal={setModal2Visible}/>
-                                    </Route>
-                                    <Route path="/comments/:id" exact>
-                                        <MemeDetails onUpVoteClick={handleUpVoteClick}
-                                                     onDownVoteClick={handleDownVoteClick}
-                                                     onShowModal={setModal2Visible}/>
-                                    </Route>
-                                    <Route path="/meme_user/:id" exact>
-                                        <UserDetails onUpVoteClick={handleUpVoteClick}
-                                                     onDownVoteClick={handleDownVoteClick}
-                                                     onShowModal={setModal2Visible}/>
-                                    </Route>
-                                    <Route>
-                                        <h1 style={{textAlign: 'center'}}>404 | Not Found</h1>
-                                    </Route>
-                                </Switch>
+                            <Switch>
+                                <Route path="/" exact>
+                                    <Meme onUpVoteClick={handleUpVoteClick}
+                                          onDownVoteClick={handleDownVoteClick}
+                                          onShowModal={setModal2Visible}
+                                    />
+                                </Route>
+                                <Route path="/meme/:id" exact>
+                                    <Meme onUpVoteClick={handleUpVoteClick}
+                                          onDownVoteClick={handleDownVoteClick}
+                                          onShowModal={setModal2Visible}
+                                    />
+                                </Route>
+                                <Route path="/details/:id" exact>
+                                    <MemeDetails onUpVoteClick={handleUpVoteClick}
+                                                 onDownVoteClick={handleDownVoteClick}
+                                                 onShowModal={setModal2Visible}/>
+                                </Route>
+                                <Route path="/comments/:id" exact>
+                                    <MemeDetails onUpVoteClick={handleUpVoteClick}
+                                                 onDownVoteClick={handleDownVoteClick}
+                                                 onShowModal={setModal2Visible}/>
+                                </Route>
+                                <Route path="/meme_user/:id" exact>
+                                    <UserDetails onUpVoteClick={handleUpVoteClick}
+                                                 onDownVoteClick={handleDownVoteClick}
+                                                 onShowModal={setModal2Visible}/>
+                                </Route>
+                                <Route>
+                                    <h1 style={{textAlign: 'center'}}>404 | Not Found</h1>
+                                </Route>
+                            </Switch>
                         </Col>
                     </Row>
                 </Content>

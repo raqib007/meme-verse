@@ -24,7 +24,8 @@ export default function AppHeader(props) {
                 <Link to={"/"}><img className="logo" src={logo} alt=""/></Link>
                 {auth.user !== null ?
                 ( <div className="header-button">
-                    <Avatar icon={<UserOutlined />} /> &nbsp;&nbsp;
+                        <Avatar icon={<UserOutlined />} /> &nbsp;&nbsp;
+                        <span style={{color:'#ffffff',marginRight:10}}>{auth.user.first_name}</span>
                     <Button type="primary" onClick={() => props.showModal(true,'upload','Create Post')}
                             shape="round" icon={<UploadOutlined />}>Upload</Button>
                     <Button type="text" onClick={() => handleLogoutClick()}>Logout</Button>

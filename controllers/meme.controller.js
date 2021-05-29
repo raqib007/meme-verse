@@ -4,9 +4,10 @@ const Pusher = require("pusher");
 const db = require('../models');
 const Meme = db.memes;
 const Comment = db.comments;
+const Users = db.users;
 
 // Create and Save a new meme
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
     // Validate request
     if (!req.body) {
         res.status(400).send({
@@ -19,35 +20,46 @@ exports.create = (req, res) => {
 
     // Save meme in the database
     req.body.user_id = req.userId;
-    Meme.create(req.body)
-        .then(data => {
-            let pusher = new Pusher({
-                appId: process.env.PUSHER_APP_ID,
-                key: process.env.PUSHER_APP_KEY,
-                secret: process.env.PUSHER_APP_SECRET,
-                cluster: process.env.PUSHER_APP_CLUSTER,
-                useTLS: true
-            });
-            // pusher.trigger('notifications', 'post_updated', data, req.headers['x-socket-id']);
+    // const followers = await Users.findById(req.userId);
+    // console.log(followers);
+    //return res.status(200).send(followers);
 
-            pusher.trigger(`notifications${data.user_id}`, "post_upload", {data: data});
-            res.send(
-                {
-                    status: true,
-                    httpStatusCode: 201,
-                    message: "Meme successfully created.",
-                    data: data
-                }
-            );
-        })
-        .catch(err => {
-            res.status(500).send({
-                status: false,
-                httpStatusCode: 500,
-                message:
-                    err.message || "Some error occurred while saving Meme."
-            });
+    try{
+        let pusher = new Pusher({
+            appId: process.env.PUSHER_APP_ID,
+            key: process.env.PUSHER_APP_KEY,
+            secret: process.env.PUSHER_APP_SECRET,
+            cluster: process.env.PUSHER_APP_CLUSTER,
+            useTLS: true
         });
+
+        const meme = await Meme.create(req.body);
+        const followers = await Users.findById(req.userId);
+        if(followers.followers.length > 0){
+            followers.followers.forEach(follower =>{
+                // console.log(follower);
+                pusher.trigger(`pusher-${follower}`, "post_upload",
+                    {message: 'New Post',description:`A new post created by ${followers?.first_name} ${followers?.last_name}`});
+            })
+        }
+
+        res.send(
+            {
+                success: true,
+                httpStatusCode: 201,
+                message: "Meme successfully created.",
+                data: meme
+            }
+        );
+    }catch (err){
+        res.status(500).send({
+            success: false,
+            httpStatusCode: 500,
+            message:
+                err.message || "Some error occurred while saving Meme."
+        });
+    }
+
 };
 // Update a meme by the id in the request
 exports.update = (req, res) => {
