@@ -24,8 +24,8 @@ router.delete('/api/upload/:id', uploadController.deleteFile);
 router.get('/api/upload/:memeId', uploadController.getAll);
 
 
-// router.get('/', (req, res) => {
-//    res.json({ message: `Welcome To Task Manager Application` });
-// });
+router.get('/', (req, res) => {
+   res.json({ message: `Welcome To Task Manager Application` });
+});
 
 module.exports = router;
