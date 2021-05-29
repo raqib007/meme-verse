@@ -71,7 +71,6 @@ export default function Dashboard(props) {
         seterrorMsg('');
     }
 
-
     function handleSigninClick(values,form) {
         fetch(`${base_url}signin`, {
             method: "post",
@@ -185,13 +184,13 @@ export default function Dashboard(props) {
                 <AppHeader showModal={setModal2Visible}/>
                 <Content className="content">
                     <Row>
-                        <Col span={3} offset={3} className="div-category">
-                            <Sticky enabled={true} top={65} bottomBoundary={1200} onStateChange={handleStateChange}>
+                        <Col xs={{ span: 8, offset: 0 }} lg={{ span: 3, offset: 3 }} className="div-category">
+                            <Sticky enabled={true} top={65}  onStateChange={handleStateChange}>
                                 <Title level={4} style={{paddingLeft: 10}}>All Section</Title>
                                 <Category categories={categories}/>
                             </Sticky>
                         </Col>
-                        <Col span={12} className="site-layout-content">
+                        <Col xs={{ span: 16, offset: 0 }} lg={{ span: 12, offset: 0 }} className="site-layout-content">
                             <Switch>
                                 <Route path="/" exact>
                                     <Meme onUpVoteClick={handleUpVoteClick}

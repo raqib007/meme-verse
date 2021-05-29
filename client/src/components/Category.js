@@ -10,15 +10,16 @@ export default function Category(props) {
                 itemLayout="horizontal"
                 dataSource={props.categories}
                 renderItem={item => (
-                    <List.Item>
-                        <List.Item.Meta
-                            avatar={<Avatar shape="square" size="small"
-                                src="https://miscmedia-9gag-fun.9cache.com/images/thumbnail-facebook/1557216707.0007_ESESyM_100x100.jpg"
-                            />}
-                            title={<Link to={`/meme/${item._id}`}>{item.name}</Link>}
-                        />
-                    </List.Item>
-                    
+                    <Link to={`/meme/${item._id}`}>
+                        <List.Item>
+                            <List.Item.Meta
+                                avatar={<Avatar shape="square" size="small"
+                                    src="https://miscmedia-9gag-fun.9cache.com/images/thumbnail-facebook/1557216707.0007_ESESyM_100x100.jpg"
+                                />}
+                                title={item.name}
+                            />
+                        </List.Item>
+                    </Link>
                 )}
             />
         </div>

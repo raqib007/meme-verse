@@ -5,6 +5,9 @@
 .div-category-list .ant-list-item-meta{
     padding: 8px;
 }
+.div-category-list .ant-list-item-meta-title{
+    cursor: pointer;
+}
 .div-category-list .ant-list-item-meta-title>a:hover {
     color: #000;
 }

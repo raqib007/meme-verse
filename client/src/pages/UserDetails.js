@@ -109,7 +109,7 @@ export default function UserDetails(props) {
             {userProfile ?
                 <div style={{ maxWidth: "550px", margin: "0px auto", border: "0px solid red", padding: "10px 24px" }}>
                     <Row gutter={20}>
-                        <Col span={4}>
+                        <Col xs={{ span: 6 }} lg={{ span: 4}}>
                             <Avatar
                                 style={{
                                     backgroundColor: '#00a2ae',
@@ -120,7 +120,7 @@ export default function UserDetails(props) {
                                 {userProfile.first_name}
                             </Avatar>
                         </Col>
-                        <Col span={20}>
+                        <Col xs={{ span: 18 }} lg={{ span: 20}}>
                             <Space direction="vertical">
                                 <Title level={3} style={{ marginBottom: "0" }}>{userProfile.first_name} {userProfile.last_name}</Title>
                                 <Text type="secondary">{userProfile.email}</Text>
