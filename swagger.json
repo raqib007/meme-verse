@@ -517,6 +517,71 @@
                 }
             }
         },
+        "/meme/": {
+            "post": {
+                "tags": [
+                    "Meme Post"
+                ],
+                "summary": "Create new meme",
+                "description": "Endpoint to create meme.",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "meme Parameters",
+                        "in": "body",
+                        "description": "meme to add to the database",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/meme"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/definitions/response"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Access Denied",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/definitions/400error"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/400error"
+                        }
+                    },
+                    "500": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/400error"
+                        }
+                    }
+                }
+            }
+        },
         "/meme/{meme_id}": {
             "parameters": [
                 {

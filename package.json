@@ -1,11 +1,11 @@
 {
-    "name": "memeVerse_backend",
+    "name": "meme-verse_backend",
     "version": "1.0.0",
     "description": "MemeVerse backend using node.js and express and mongoose",
     "main": "app.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "node app.js"
+        "start": "nodemon app.js"
     },
     "keywords": [],
     "author": "Md. Raqib Hasan",
@@ -21,6 +21,7 @@
         "mongodb": "^3.6.6",
         "mongoose": "^5.12.9",
         "multer": "^1.4.2",
+        "pusher": "^5.0.0",
         "swagger-ui-express": "^4.1.6"
     }
 }

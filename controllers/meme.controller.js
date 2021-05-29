@@ -1,4 +1,6 @@
+require("dotenv").config({ path: "../config/config.env" });
 const ObjectId = require("mongodb").ObjectID;
+const Pusher = require("pusher");
 const db = require('../models');
 const Meme = db.memes;
 const Comment = db.comments;
@@ -16,8 +18,19 @@ exports.create = (req, res) => {
     }
 
     // Save meme in the database
+    req.body.user_id = req.userId;
     Meme.create(req.body)
         .then(data => {
+            let pusher = new Pusher({
+                appId: process.env.PUSHER_APP_ID,
+                key: process.env.PUSHER_APP_KEY,
+                secret: process.env.PUSHER_APP_SECRET,
+                cluster: process.env.PUSHER_APP_CLUSTER,
+                useTLS: true
+            });
+            // pusher.trigger('notifications', 'post_updated', data, req.headers['x-socket-id']);
+
+            pusher.trigger(`notifications${data.user_id}`, "post_upload", {data: data});
             res.send(
                 {
                     status: true,
@@ -64,8 +77,8 @@ exports.findOne = async (req, res) => {
             .populate('category', { 'name': 1 })
             .populate('user_id', { 'email': 1, 'first_name': 1, 'last_name': 1 });
         let data = [];
-        const comments = await Comment.find({ meme_id: new ObjectId(memes._id) , deleted:false })
-                                      .populate('user_id', { 'email': 1, 'first_name': 1, 'last_name': 1 });
+        const comments = await Comment.find({ meme_id: new ObjectId(memes._id), deleted: false })
+            .populate('user_id', { 'email': 1, 'first_name': 1, 'last_name': 1 });
 
         data.push(Object.assign({}, memes?._doc, { comments: comments }));
         res.status(200).json(data[0]);
@@ -79,18 +92,18 @@ exports.findOne = async (req, res) => {
 // Retrieve all meme from the database.
 exports.getAll = async (req, res) => {
     try {
-        if(req.params.category === 'all' ){
+        if (req.params.category === 'all') {
             let memes = await Meme.find({})
                 .populate('user_id', { 'email': 1, 'first_name': 1, 'last_name': 1 })
                 .populate('category', { 'name': 1 });
             let data = [];
             for (const meme of memes) {
-                const comments = await Comment.find({ meme_id: new ObjectId(meme._id) , deleted: false});
+                const comments = await Comment.find({ meme_id: new ObjectId(meme._id), deleted: false });
                 data.push(Object.assign({}, meme?._doc, { comments: comments }));
             }
             res.status(200).json(data);
-        }else{
-            let memes = await Meme.find({category:req.params.category})
+        } else {
+            let memes = await Meme.find({ category: req.params.category })
                 .populate('user_id', { 'email': 1, 'first_name': 1, 'last_name': 1 })
                 .populate('category', { 'name': 1 });
             let data = [];
@@ -141,21 +154,21 @@ exports.like = (req, res) => {
     }, {
         new: true
     }, (err, result) => {
-            if (err) {
-                return res.status(500).json({ error: err })
-            }
-            Meme.findByIdAndUpdate(id, {
-                $push: { likes: req.userId }
-            }, {
-                new: true
-            }, (error, result2) => {
-                    if (error) {
-                        return res.status(500).json({ error: error })
-                    }
-                    return res.status(200).json({ data: result2 })
-                }
-            )
+        if (err) {
+            return res.status(500).json({ error: err })
         }
+        Meme.findByIdAndUpdate(id, {
+            $push: { likes: req.userId }
+        }, {
+            new: true
+        }, (error, result2) => {
+            if (error) {
+                return res.status(500).json({ error: error })
+            }
+            return res.status(200).json({ data: result2 })
+        }
+        )
+    }
     )
 };
 // Dislike a meme with the specified id in the request
@@ -166,24 +179,23 @@ exports.dislike = (req, res) => {
     }, {
         new: true
     }, (err, result) => {
-            if (err) {
-                return res.status(500).json({ error: err })
-            }
-            Meme.findByIdAndUpdate(id, {
-                $push: { unlikes: req.userId }
-            }, {
-                new: true
-            }, (error, result2) => {
-                    if (error) {
-                        return res.status(500).json({ error: error })
-                    }
-                    return res.status(200).json({ data: result2 })
-                }
-            )
+        if (err) {
+            return res.status(500).json({ error: err })
         }
+        Meme.findByIdAndUpdate(id, {
+            $push: { unlikes: req.userId }
+        }, {
+            new: true
+        }, (error, result2) => {
+            if (error) {
+                return res.status(500).json({ error: error })
+            }
+            return res.status(200).json({ data: result2 })
+        }
+        )
+    }
     )
 };
-
 exports.removeLike = (req, res) => {
     const id = req.params.meme_id;
     Meme.findByIdAndUpdate(id, {
@@ -191,14 +203,13 @@ exports.removeLike = (req, res) => {
     }, {
         new: true
     }, (err, result) => {
-            if (err) {
-                return res.status(200).json({ error: err ,success:false})
-            }
-            return res.status(200).json({ data: result ,success:true})
+        if (err) {
+            return res.status(200).json({ error: err, success: false })
         }
+        return res.status(200).json({ data: result, success: true })
+    }
     )
 };
-
 exports.removeUnlike = (req, res) => {
     const id = req.params.meme_id;
     Meme.findByIdAndUpdate(id, {
@@ -206,10 +217,10 @@ exports.removeUnlike = (req, res) => {
     }, {
         new: true
     }, (err, result) => {
-            if (err) {
-                return res.status(200).json({ error: err ,success:false})
-            }
-            return res.status(200).json({ data: result ,success:true})
+        if (err) {
+            return res.status(200).json({ error: err, success: false })
         }
+        return res.status(200).json({ data: result, success: true })
+    }
     )
 };
