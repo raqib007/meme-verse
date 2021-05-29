@@ -10,7 +10,6 @@
       <change beforePath="$PROJECT_DIR$/client/src/forms/SigninForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/forms/SigninForm.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/forms/SignupForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/forms/SignupForm.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/pages/Dashboard.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/Dashboard.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,7 +17,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/client" />
   </component>
   <component name="ProjectId" id="1tCw1K4clvDpAnEDb737Rem1ON1" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -42,7 +41,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1622286168390</updated>
-      <workItem from="1622286178610" duration="8037000" />
+      <workItem from="1622286178610" duration="8883000" />
     </task>
     <servers />
   </component>
